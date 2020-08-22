@@ -1,0 +1,20 @@
+<br>
+<h1>
+  Dashboard <% @orders.count %>
+</h1>
+<hr>
+<% @orders.each do |order| %>
+<div class="row">
+  <div class="col-lg-12">
+    <div class="panel panel-success">
+      <div class="panel-heading text-right">
+        <%= order.status.gsub("_", " ") %>
+      </div>
+      <div class="panel-body">
+        <a><%= order.customer_name %></a> ordered <b><%= items_description(order) %></b> for <%= order.currency %> <%= number_with_precision(1.0 * order.cents_price / 100, precision: 2) %>. Please deliver to <i><%= order.customer_address %>, <%= order.customer_suburb %> <%= order.customer_postcode %>, <%= order.customer_state %></i>.
+      </div>
+    </div>
+  </div>
+</div>
+<% end %>
+<hr>
