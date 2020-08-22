@@ -5,8 +5,26 @@ class OrdersController < ApplicationController
     @orders = Order.all
   end
 
-  helper_method :items_description
-  def items_description(order)
-    order.items.map { |i| "#{i.quantity} #{i.name}" }.join(", ")
+  def update
+    order.update(status: :paid)
+
+    kafka_client.deliver_message(order.as_json.except("id").to_json, topic: "test_orders")
+
+    redirect_to root_path
+  end
+
+  private
+
+  def order
+    Order.find(params[:id])
+  end
+
+  def kafka_client
+    @_kafka ||= Kafka.new(
+      seed_brokers:             "pkc-ldvj1.ap-southeast-2.aws.confluent.cloud:9092",
+      sasl_plain_username:      ENV["CONFLUENT_KEY"],
+      sasl_plain_password:      ENV["CONFLUENT_SECRET"],
+      ssl_ca_certs_from_system: true
+    )
   end
 end
