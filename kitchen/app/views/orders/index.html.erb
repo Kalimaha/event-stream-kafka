@@ -1,48 +1,47 @@
 <br>
 <h1>
-  Checkout
+  Kitchen
 </h1>
 <hr>
 <% if @orders.empty? %>
-  <p class="lead text-center">You don't have any orders yet.</p>
+  <p class="lead text-center">There are no orders yet. Relax.</p>
 <% end %>
 <% @orders.order(updated_at: :desc).each do |order| %>
 <div class="row">
   <div class="col-lg-12">
-    <div class="panel panel-info">
+    <div class="panel panel-danger">
       <div class="panel-heading text-right">
-        <%= order.status&.gsub("_", " ") %>
+        <%= order.status %>
       </div>
       <div class="panel-body">
         Order <a><%= order.key %></a> submitted on <%= order.created_at %>.
         <br><br>
         <ul>
           <% order.items.each do |item| %>
-            <li><%= item.quantity %> X <%= item.name %><span class="pull-right"><%= number_with_precision(1.0 * item.cents_price / 100, precision: 2) %></span></li>
+            <li><%= item.quantity %> X <%= item.name %></li>
           <% end %>
-          <li><b>Total<span class="pull-right"><%= order.currency %> <%= number_with_precision(1.0 * order.cents_price / 100, precision: 2) %></span></b></li>
         </ul>
         <br>
         Deliver to <a><%= order.customer_name %></a> <u><%= order.customer_address %>, <%= order.customer_suburb %> <%= order.customer_postcode %>, <%= order.customer_state %></u>.
       </div>
-      <% if order.status == "in_progress" %>
+      <% if order.status == "paid" %>
         <div class="panel-footer text-center">
           <%= form_for order do |f| %>
-            <%= f.hidden_field :status, :value => "paid" %>
-            <%= f.submit "Submit Order", :class => "btn btn-info", :style => "width: 100%;" %>
+            <%= f.hidden_field :status, :value => "cooking" %>
+            <%= f.submit "Start Cooking", :class => "btn btn-danger", :style => "width: 100%;" %>
           <% end %>
         </div>
-      <% elsif order.status == "dispatched" %>
+      <% elsif order.status == "cooking" %>
         <div class="panel-footer text-center">
           <%= form_for order do |f| %>
-            <%= f.hidden_field :status, :value => "delivered" %>
-            <%= f.submit "I received my order", :class => "btn btn-info", :style => "width: 100%;" %>
+            <%= f.hidden_field :status, :value => "dispatched" %>
+            <%= f.submit "Dispatch", :class => "btn btn-danger", :style => "width: 100%;" %>
           <% end %>
         </div>
       <% else %>
         <div class="panel-footer text-center">
           <%= form_for order do |f| %>
-            <%= f.submit "All good for now, enjoy!", :class => "btn btn-info disabled", :style => "width: 100%;" %>
+            <%= f.submit "Out for Delivery", :class => "btn btn-danger disabled", :style => "width: 100%;" %>
           <% end %>
         <div>
       <% end %>

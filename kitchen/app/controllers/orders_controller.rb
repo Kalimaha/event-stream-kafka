@@ -14,7 +14,7 @@ class OrdersController < ApplicationController
 
     json_order = json_order.deep_transform_keys { |key| key.camelize(:lower) }
 
-    kafka_client.deliver_message(json_order.to_json, topic: "test_orders")
+    kafka_client.deliver_message(order.as_json.except("id").to_json, topic: "test_orders")
 
     redirect_to root_path
   end
