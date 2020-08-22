@@ -32,6 +32,14 @@ For the app to work, you have to setup the following variables:
 * `CONFLUENT_KEY`
 * `CONFLUENT_SECRET`
 
+#### Publish random orders to Kafka
+
+> Move to `kafka-utils` directory
+
+```bash
+bundle exec rake kafka:produce
+```
+
 ## Test
 
 ## Run
