@@ -14,7 +14,7 @@ namespace :kafka do
 
     trap("TERM") { consumer.stop }
 
-    kafka.each_message(topic: "test_orders") do |message|
+    kafka.each_message(topic: "test_orders", max_wait_time: 0.5) do |message|
       data = JSON.parse(message.value)
 
       puts "==="
@@ -48,6 +48,11 @@ namespace :kafka do
             order: order
           )
         end
+      end
+
+      if !order.id.nil? && (data.dig("status") == "delivered")
+        puts "\tyeah, let's update #{order.id}"
+        order.update(status: data.dig("status"))
       end
     end
   end
